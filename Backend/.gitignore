@@ -1,2 +1,8 @@
 .env
 env
+# Ignore all .env files
+.env
+.env.*
+dist
+node_modules
+echo "logs/" 
