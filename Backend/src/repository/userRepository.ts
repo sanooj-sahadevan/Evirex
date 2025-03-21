@@ -1,7 +1,6 @@
-import { UserModel } from "../models/userModel"; 
+import { UserModel } from "../models/userModel";
+import { GetUserOutput } from "../interface/repository/userRepository.types";
 
 export class UserRepository {
-//   async getAllUsers() {
-//     return await UserModel.find();
-//   }
+
 }

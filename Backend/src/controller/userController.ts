@@ -1,19 +1,31 @@
-import { Request, Response } from "express";
-import { UserService } from "../service/userService";
+import { Request } from "express";
+import { IUserController } from "../interface/controller/userController.interface";
+import { ControllerResponse } from "../interface/controller/userController.types";
+import { IUserService } from "../interface/services/userService.interface";
 
-export class UserController {
-  private userService: UserService;
+export class UserController implements IUserController {
+    private userService: IUserService;
 
-  constructor(userService: UserService) {
-    this.userService = userService;
-  }
+    constructor(userService: IUserService) {
+        this.userService = userService;
+    }
 
-//   async getAllUsers(req: Request, res: Response): Promise<void> {
-//     try {
-//       const users = await this.userService.getAllUsers();
-//       res.json(users);
-//     } catch (error) {
-//       res.status(500).json({ error: "Internal Server Error" });
-//     }
-//   }
+    userLogin = async (httpRequest: Request): Promise<ControllerResponse> => {
+        try {
+            const { email, password } = httpRequest.body;
+            const user = await this.userService.userLogin(email, password);
+
+            return {
+                headers: { "Content-Type": "application/json" },
+                statusCode: 200,
+                body: user,
+            };
+        } catch (e: any) {
+            return {
+                headers: { "Content-Type": "application/json" },
+                statusCode: e.statusCode || 500,
+                body: { error: e.message },
+            };
+        }
+    };
 }
