@@ -1,7 +1,8 @@
 import { IUserService } from "../interface/services/userService.interface";
 import { IUserRepository } from "../interface/repository/userRepository.interface";
 import { IUser } from "../models/userModel";
-import { generateAccessToken, generateRefreshToken } from "../utils/generateJWT";
+import jwt from "jsonwebtoken";
+import { Response } from 'express'; // Import Response type
 
 export class UserService implements IUserService {
     private userRepository: IUserRepository;
@@ -10,7 +11,7 @@ export class UserService implements IUserService {
         this.userRepository = userRepository;
     }
 
-    async userLogin(email: string, password: string): Promise<{ user: IUser; accessToken: string; refreshToken: string } | { error: string }> {
+    async userLogin(email: string, password: string, res?: Response): Promise<{ user: IUser; accessToken: string; refreshToken: string } | { error: string }> {
         const user = await this.userRepository.findByEmail(email);
 
         if (!user) {
@@ -21,9 +22,19 @@ export class UserService implements IUserService {
             return { error: "Incorrect password" };
         }
 
-        // Generate JWT tokens (without role)
-        const accessToken = generateAccessToken(user.id.toString());
-        const refreshToken = generateRefreshToken(user.id.toString());
+        const accessToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || "sanooj", { expiresIn: "1h" }); 
+        const refreshToken = jwt.sign({ userId: user._id }, process.env.JWT_REFRESH_SECRET || "sanooj_refresh", { expiresIn: "7d" });
+
+        // Set cookie if Response object is provided.  This is optional and allows more flexibility.
+        if (res) {
+            res.cookie("refreshToken", refreshToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "strict",
+                path: "/",
+               
+            });
+        }
 
         return { user, accessToken, refreshToken };
     }
@@ -31,15 +42,21 @@ export class UserService implements IUserService {
     async getUsers(): Promise<IUser[]> {
         return this.userRepository.getAllUsers();
     }
+
+    
     async updateUserAmount(userId: number, newAmount: number): Promise<IUser | null | { error: string }> {
+        console.log(userId,'service',newAmount);
+
         if (typeof newAmount !== 'number' || newAmount < 0) {
             return { error: "Invalid amount. Amount must be a non-negative number." };
         }
+
         const updatedUser = await this.userRepository.updateUserAmount(userId, newAmount);
+
         if (!updatedUser) {
             return { error: "User not found" };
         }
+
         return updatedUser;
     }
-  
 }

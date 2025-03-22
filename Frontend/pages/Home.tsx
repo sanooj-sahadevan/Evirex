@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import { FetchUSer, LogoutAPI, UpdateUserAmount } from '@/services/api'; // Import the new API call
@@ -30,6 +29,7 @@ ChartJS.register(
 
 
 interface User {
+    _id: number;
     id: number;
     status: string;
     email: string;
@@ -135,7 +135,7 @@ const Dashboard = () => {
     };
 
     const [chartData, setChartData] = useState<ChartData>({
-        labels: [], // Initially empty
+        labels: [],
         datasets: [
             {
                 label: 'User Amount',
@@ -149,10 +149,10 @@ const Dashboard = () => {
 
     const chartOptions = {
         responsive: true,
-        maintainAspectRatio: false, // Allow the chart to stretch/shrink
+        maintainAspectRatio: false,
         plugins: {
             legend: {
-                display: false, // Remove the legend for a cleaner look
+                display: false,
             },
             title: {
                 display: true,
@@ -224,6 +224,52 @@ const Dashboard = () => {
         }
     };
 
+    const handleUpdateAmount = async (userId: number, increment: number) => {
+        try {
+            setLoading(true);
+            setError(false);
+            console.log(userId);
+
+            const userToUpdate = users.find(u => u._id === userId);
+console.log(userToUpdate,'okkk');
+
+            if (!userToUpdate) {
+                toast.error("User not found.");
+                setLoading(false);
+                return;
+            }
+
+            const newAmount = userToUpdate.amount + increment; // Calculate the new amount
+
+            const updateResult = await UpdateUserAmount(userId, newAmount);
+
+            if (updateResult.success) {
+                // Update successful
+                // Refetch the users list or optimistically update the state (as discussed previously)
+                const result: ApiResult = await FetchUSer();
+                if (Array.isArray(result)) {
+                    setUsers(result);
+                    updateChartData(result); // Update chart data after fetching users
+                    toast.success("Amount updated successfully!");
+                } else if (result && typeof result === 'object' && 'error' in result) {
+                    setError(true);
+                    toast.error(result.message);
+                } else {
+                    setError(true);
+                    toast.error("Unexpected response from the server.");
+                }
+
+            } else {
+                // Update failed
+                toast.error(updateResult.message || "Failed to update amount."); // Show the error message
+            }
+        } catch (e: any) {
+            toast.error(`Failed to update amount: ${e.message}`);
+            setError(true);
+        } finally {
+            setLoading(false);
+        }
+    };
 
 
     return (
@@ -361,7 +407,7 @@ const Dashboard = () => {
                                         {currentUsers.length > 0 ? (
                                             currentUsers.map((user) => (
                                                 <tr key={user.id} className="text-center">
-                                                    <td className="border border-gray-500 p-2 text-gray-800">{user.id}</td>
+                                                    <td className="border border-gray-500 p-2 text-gray-800">{user._id}</td>
                                                     <td className="border border-gray-500 p-2 text-gray-800">
                                                         <span
                                                             className={`px-2 py-1 rounded text-xs ${user.status === 'active'
@@ -378,13 +424,15 @@ const Dashboard = () => {
                                                     <td className="border border-gray-500 p-2">
                                                         <button
                                                             className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-2 rounded mr-2"
-                                                        // Increase by 10
+                                                            onClick={() => handleUpdateAmount(user._id, 10)} // Increase by 10
+                                                            disabled={loading}
                                                         >
                                                             +
                                                         </button>
                                                         <button
                                                             className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-2 rounded"
-
+                                                            onClick={() => handleUpdateAmount(user._id, -10)}// Descrease by 10
+                                                            disabled={loading}
                                                         >
                                                             -
                                                         </button>

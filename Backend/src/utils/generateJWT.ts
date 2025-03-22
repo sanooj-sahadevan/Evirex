@@ -11,6 +11,7 @@ export function generateAccessToken(id: string): string {
   }
 }
 
+
 export function generateRefreshToken(id: string): string {
   try {
     const payload = { id }; 

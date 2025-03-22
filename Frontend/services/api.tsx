@@ -21,7 +21,7 @@ export const LoginAPI = async (reqBody: any, reqHeader?: Record<string, string>)
     });
     return response.data;
   } catch (error: any) {
-    console.error("LoginAPI Error:", error.response?.data || error.message);
+    //   console.error("LoginAPI Error:", error.response?.data || error.message);
     return { error: true, message: error.response?.data?.message || "Login failed. Please try again." };
   }
 };
@@ -58,16 +58,20 @@ export const LogoutAPI = async () => {
 
 
 
-export const UpdateUserAmount = async (userId: number, newAmount: number): Promise<boolean> => {
+export const UpdateUserAmount = async (userId: number, newAmount: number): Promise<{ success: boolean; message?: string }> => {
   try {
     console.log(userId, 'userid');
+    const response = await Axios.put(`${SERVER_URL}/api/usersUpdate/${userId}`, { amount: newAmount });
 
-    const response = await axios.put(`${SERVER_URL}/usersUpdate/${userId}`, { amount: newAmount });
     console.log(response);
 
-    return response.status === 200;
-  } catch (error) {
+    if (response.status === 200) {
+      return { success: true };
+    } else {
+      return { success: false, message: `Update failed with status: ${response.status}` }; // Include a message
+    }
+  } catch (error: any) {
     console.error("Error updating user amount:", error);
-    return false;
+    return { success: false, message: error.response?.data?.message || "Failed to update user amount." };  // Include error message
   }
 };
