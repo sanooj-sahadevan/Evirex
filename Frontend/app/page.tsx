@@ -1,10 +1,9 @@
+import LoginPage from "@/pages/loginPage";
 
 export default function Home() {
   return (
-
     <div>
-      <h1>PEACE</h1>
+      <LoginPage />
     </div>
-   
   );
 }

@@ -8,9 +8,13 @@ import { expressCallback } from "../utils/expressCallback";
 const router = Router();
 
 const userRepository = new UserRepository();
-const userService = new UserService();
+const userService = new UserService(userRepository);
 const userController = new UserController(userService);
 
 router.post("/login", loginValidator, expressCallback(userController.userLogin));
+router.get("/fetchuser", expressCallback(userController.fetchUsers));
+router.put("/usersUpdate/:userId", expressCallback(userController.updateUserAmount));
+//router.post("/logout", expressCallback(userController.userLogout)); 
+
 
 export default router;
