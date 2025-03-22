@@ -14,10 +14,7 @@ export class UserRepository implements IUserRepository {
 
     async updateUserAmount(userId: number, newAmount: number): Promise<IUser | null> {
         try {
-            // if (!mongoose.Types.ObjectId.isValid(userId.toString())) {
-            //     console.log("Invalide user Id ");
-            //     return null;
-            // }
+        
             console.log(userId,newAmount);
             
             const updatedUser = await UserModel.findOneAndUpdate(

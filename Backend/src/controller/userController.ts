@@ -1,4 +1,4 @@
-import { Request, Response } from "express"; // Import Response here
+import { Request, Response } from "express"; 
 import { IUserController } from "../interface/controller/userController.interface";
 import { ControllerResponse } from "../interface/controller/userController.types";
 import { IUserService } from "../interface/services/userService.interface";
@@ -19,7 +19,7 @@ export class UserController implements IUserController {
             if ('error' in userLoginResult) {
                 return {
                     headers: { "Content-Type": "application/json" },
-                    statusCode: 401,  // or whatever status code is appropriate
+                    statusCode: 401,
                     body: { error: userLoginResult.error },
                 };
             }
@@ -30,7 +30,7 @@ export class UserController implements IUserController {
                 body: userLoginResult,
             };
         } catch (e: any) {
-            console.error("Error in userLogin controller:", e);  // Log the error
+            console.error("Error in userLogin controller:", e); 
             return {
                 headers: { "Content-Type": "application/json" },
                 statusCode: e.statusCode || 500,
@@ -48,7 +48,7 @@ export class UserController implements IUserController {
                 body: users,
             };
         } catch (e: any) {
-            console.error("Error in fetchUsers controller:", e);  // Log the error
+            console.error("Error in fetchUsers controller:", e);  
             return {
                 headers: { "Content-Type": "application/json" },
                 statusCode: e.statusCode || 500,
@@ -86,7 +86,7 @@ export class UserController implements IUserController {
             if ('error' in updatedUser) {
                 return {
                     headers: { "Content-Type": "application/json" },
-                    statusCode: 400, // Or appropriate status code
+                    statusCode: 400, 
                     body: { error: updatedUser.error },
                 };
             }

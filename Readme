@@ -1,0 +1,25 @@
+# Project Setup
+
+## Backend Setup
+Run the following commands to start the backend:
+
+```sh
+cd Backend  
+npm install  
+npm run dev  
+
+
+
+cd Frontend  
+npm install  
+npm run dev  
+
+
+
+
+# Login Credentials
+# Use the following credentials to log in:
+
+Email: sanusahadev007@gmail.com
+
+Password: Sanooj@123

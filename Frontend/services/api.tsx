@@ -21,7 +21,6 @@ export const LoginAPI = async (reqBody: any, reqHeader?: Record<string, string>)
     });
     return response.data;
   } catch (error: any) {
-    //   console.error("LoginAPI Error:", error.response?.data || error.message);
     return { error: true, message: error.response?.data?.message || "Login failed. Please try again." };
   }
 };
