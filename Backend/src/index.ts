@@ -13,7 +13,24 @@ connectToMongoDB();
 
 
 
-app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+app.use(cors({
+    credentials: true,
+    origin: (origin, callback) => {
+        const allowedOrigins = [
+          //  "http://localhost:3000",
+            // "https://evirex.vercel.app",
+             '*'
+        ];
+
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, origin);
+        } else {
+            callback(null, "*");
+        }
+    }
+}));
+
+
 app.use(express.json());
 app.use(cookieParser());
 
