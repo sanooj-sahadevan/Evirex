@@ -17,8 +17,8 @@ app.use(cors({
     credentials: true,
     origin: (origin, callback) => {
         const allowedOrigins = [
-          //  "http://localhost:3000",
-            // "https://evirex.vercel.app",
+           "http://localhost:3000",
+            "https://evirex.vercel.app",
              '*'
         ];
 
