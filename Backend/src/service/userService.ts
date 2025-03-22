@@ -28,13 +28,18 @@ export class UserService implements IUserService {
         // Set cookie if Response object is provided.  This is optional and allows more flexibility.
         if (res) {
             res.cookie("refreshToken", refreshToken, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
+               // httpOnly: true,
+               // secure: process.env.NODE_ENV === "production",
                 sameSite: "strict",
                 path: "/",
                
             });
         }
+
+        // res.cookie("token", token, {
+        //     sameSite: 'strict',
+        //     maxAge: 3600000,
+        //   });
 
         return { user, accessToken, refreshToken };
     }
